@@ -1,0 +1,30 @@
+# Do not change version. This is the version of aws buildspec, not the version of your buldspec file.
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      nodejs: 14 
+    commands:
+      - echo Getting Started
+  pre_build:
+    commands:
+      - echo Installing some dependencies and source packages
+      - npm install
+      - aws --version
+  build:
+    commands:
+      - echo Build started on `date`
+      - echo first test code
+      - CI=true npm test
+      - echo Compiling the React code
+      - npm run build
+      - echo build finished, now moving to S3
+      
+  post_build:
+    commands:
+      - echo Build completed on `date`
+      - aws s3 sync build s3://codebuildtry --acl public-read
+artifacts:
+  files:
+    - build/*
